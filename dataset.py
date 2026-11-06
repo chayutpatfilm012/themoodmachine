@@ -23,6 +23,8 @@ POSITIVE_WORDS = [
     "chill",
     "relaxed",
     "amazing",
+    "fire",
+    "hyped",
 ]
 
 NEGATIVE_WORDS = [
@@ -36,6 +38,7 @@ NEGATIVE_WORDS = [
     "stressed",
     "hate",
     "boring",
+    "trash",
 ]
 
 # ---------------------------------------------------------------------
@@ -50,6 +53,20 @@ SAMPLE_POSTS = [
     "This is fine",
     "So excited for the weekend",
     "I am not happy about this",
+    "I absolutely love getting stuck in traffic for two hours 🙄",
+    "no cap this new album is fire 🔥",
+    "Not bad at all, honestly",
+    "Got the job offer but I have to move away from all my friends 🥲",
+    "Wow, another Monday. Can't wait 😒",
+    "Bus comes at 8:15 tomorrow",
+    "lowkey stressed about finals but highkey excited for summer",
+    "That exam was so easy I'm literally dead 💀😂",
+    "Finally submitted my thesis and I can't stop smiling 😭🎉",
+    "Ugh, flight got cancelled and nobody at the desk can help us",
+    "Heading to the airport at 6, back next Thursday",
+    "Proud of how we played but so sad we lost in overtime",
+    "This new update is mid tbh, nothing works like before",
+    "Coffee with my best friend after months apart ☕ needed this",
 ]
 
 # Human labels for each post above.
@@ -65,6 +82,20 @@ TRUE_LABELS = [
     "neutral",   # "This is fine"
     "positive",  # "So excited for the weekend"
     "negative",  # "I am not happy about this"
+    "negative",  # "I absolutely love getting stuck in traffic for two hours 🙄"
+    "positive",  # "no cap this new album is fire 🔥"
+    "positive",  # "Not bad at all, honestly"
+    "mixed",     # "Got the job offer but I have to move away from all my friends 🥲"
+    "negative",  # "Wow, another Monday. Can't wait 😒"
+    "neutral",   # "Bus comes at 8:15 tomorrow"
+    "mixed",     # "lowkey stressed about finals but highkey excited for summer"
+    "positive",  # "That exam was so easy I'm literally dead 💀😂"
+    "positive",  # "Finally submitted my thesis and I can't stop smiling 😭🎉"
+    "negative",  # "Ugh, flight got cancelled and nobody at the desk can help us"
+    "neutral",   # "Heading to the airport at 6, back next Thursday"
+    "mixed",     # "Proud of how we played but so sad we lost in overtime"
+    "negative",  # "This new update is mid tbh, nothing works like before"
+    "positive",  # "Coffee with my best friend after months apart ☕ needed this"
 ]
 
 # TODO: Add 5-10 more posts and labels.

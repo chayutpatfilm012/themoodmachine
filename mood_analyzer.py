@@ -9,9 +9,13 @@ This class starts with very simple logic:
   - Convert that score into a mood label
 """
 
+import string
 from typing import List, Dict, Tuple, Optional
 
 from dataset import POSITIVE_WORDS, NEGATIVE_WORDS
+
+# Words that flip the sentiment of the word right after them.
+NEGATION_WORDS = {"not", "never"}
 
 
 class MoodAnalyzer:
@@ -53,7 +57,16 @@ class MoodAnalyzer:
           - Normalize repeated characters ("soooo" -> "soo")
         """
         cleaned = text.strip().lower()
-        tokens = cleaned.split()
+
+        tokens: List[str] = []
+        for raw_token in cleaned.split():
+            # Strip punctuation from the edges only, so "happy!" -> "happy"
+            # while inner apostrophes survive ("can't" stays "can't").
+            token = raw_token.strip(string.punctuation)
+
+            # A token made only of punctuation is likely an emoticon like ":)"
+            # or ":-(", so keep it as-is instead of dropping it.
+            tokens.append(token if token else raw_token)
 
         return tokens
 
@@ -75,15 +88,33 @@ class MoodAnalyzer:
           - Give some words higher weights than others (for example "hate" < "annoyed")
           - Treat emojis or slang (":)", "lol", "💀") as strong signals
         """
-        # TODO: Implement this method.
-        #   1. Call self.preprocess(text) to get tokens.
-        #   2. Loop over the tokens.
-        #   3. Increase the score for positive words, decrease for negative words.
-        #   4. Return the total score.
-        #
-        # Hint: if you implement negation, you may want to look at pairs of tokens,
-        # like ("not", "happy") or ("never", "fun").
-        pass
+        tokens = self.preprocess(text)
+        score = 0
+
+        for i, token in enumerate(tokens):
+            if token in self.positive_words:
+                word_score = 1
+            elif token in self.negative_words:
+                word_score = -1
+            else:
+                continue
+
+            # Modeling improvement: negation. If the previous token negates
+            # this word, flip its score ("not happy" -> -1, "never bad" -> +1).
+            if i > 0 and self.is_negation(tokens[i - 1]):
+                word_score = -word_score
+
+            score += word_score
+
+        return score
+
+    def is_negation(self, token: str) -> bool:
+        """
+        Return True if the token negates the word that follows it.
+
+        Covers "not", "never", and "n't" contractions like "don't" or "can't".
+        """
+        return token in NEGATION_WORDS or token.endswith("n't")
 
     # ---------------------------------------------------------------------
     # Label prediction
@@ -105,12 +136,30 @@ class MoodAnalyzer:
         Just remember that whatever labels you return should match the labels
         you use in TRUE_LABELS in dataset.py if you care about accuracy.
         """
-        # TODO: Implement this method.
-        #   1. Call self.score_text(text) to get the numeric score.
-        #   2. Return "positive" if the score is above 0.
-        #   3. Return "negative" if the score is below 0.
-        #   4. Return "neutral" otherwise.
-        pass
+        score = self.score_text(text)
+
+        # Find out whether the text has both positive and negative signals.
+        # Each word's contribution is how much the score changes when that
+        # word is added, so negation is handled exactly as in score_text().
+        tokens = self.preprocess(text)
+        has_positive = False
+        has_negative = False
+        previous_score = 0
+        for i in range(len(tokens)):
+            current_score = self.score_text(" ".join(tokens[: i + 1]))
+            if current_score > previous_score:
+                has_positive = True
+            elif current_score < previous_score:
+                has_negative = True
+            previous_score = current_score
+
+        if has_positive and has_negative:
+            return "mixed"
+        if score > 0:
+            return "positive"
+        if score < 0:
+            return "negative"
+        return "neutral"
 
     # ---------------------------------------------------------------------
     # Explanations (optional but recommended)
